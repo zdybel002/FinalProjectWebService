@@ -46,7 +46,7 @@ public class Category {
     private Long uncompletedCount;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id") // which fields link these two objects (foreign key)
     private User user;
 
