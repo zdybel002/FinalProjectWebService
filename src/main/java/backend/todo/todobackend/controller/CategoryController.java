@@ -5,6 +5,7 @@ import backend.todo.todobackend.DTO.EmailRequest;
 import backend.todo.todobackend.entity.Category;
 import backend.todo.todobackend.search.CategorySearchValues;
 import backend.todo.todobackend.service.CategoryService;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,6 +79,22 @@ public class CategoryController {
         categoryService.update(category);
 
         // return status 200 OK
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    // delete category by ID (using DELETE method and path variable)
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+
+        // try to delete the category
+        try {
+            categoryService.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // return status 200 OK if delete is successful
         return new ResponseEntity(HttpStatus.OK);
     }
 
