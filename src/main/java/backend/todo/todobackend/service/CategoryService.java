@@ -32,6 +32,10 @@ public class CategoryService {
     public List<Category> findByTitle(String text, String email) {
         return repository.findByTitle(text, email);
     }
+    // add new category
+    public Category add(Category category) {
+        return repository.save(category);
+    }
 
 
 

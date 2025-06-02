@@ -43,4 +43,21 @@ public class CategoryController {
         return ResponseEntity.ok(list);
     }
 
+    @PostMapping("/add")
+    public ResponseEntity<Category> add(@RequestBody Category category) {
+
+        // check if ID is set (should be null when adding)
+        if (category.getId() != null && category.getId() != 0) {
+            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // check if title is empty or null
+        if (category.getTitle() == null || category.getTitle().trim().length() == 0) {
+            return new ResponseEntity("missed param: title MUST be not null", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // save category and return it with generated ID
+        return ResponseEntity.ok(categoryService.add(category));
+    }
+
 }
