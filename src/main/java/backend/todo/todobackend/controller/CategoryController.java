@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @RestController
@@ -96,6 +97,24 @@ public class CategoryController {
 
         // return status 200 OK if delete is successful
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    // find category by ID
+    @PostMapping("/id")
+    public ResponseEntity<Category> findById(@RequestBody Long id) {
+
+        Category category = null;
+
+        // try to find category by ID
+        try {
+            category = categoryService.findById(id);
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // return found category
+        return ResponseEntity.ok(category);
     }
 
 

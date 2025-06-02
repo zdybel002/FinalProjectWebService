@@ -6,12 +6,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 import java.util.List;
-
+import java.util.NoSuchElementException;
 
 
 @Service
@@ -49,6 +50,10 @@ public class CategoryService {
         repository.deleteById(id);
     }
 
+    // find category by ID
+    public Category findById(Long id) {
+        return repository.findById(id).get(); // since an Optional is returned, we get the object using get()
+    }
 
 
 
