@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -74,6 +75,25 @@ public class TaskController {
         return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
 
     }
+
+    // get task by id
+    @PostMapping("/id")
+    public ResponseEntity<Task> findById(@RequestBody Long id) {
+
+        Task task = null;
+
+        // try-catch is optional, without it stacktrace will be returned on error
+        // here is an example of handling exceptions and sending custom message/status
+        try {
+            task = taskService.findById(id);
+        } catch (NoSuchElementException e) { // if object not found
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(task);
+    }
+
 
 
 }

@@ -23,6 +23,11 @@ public class TaskService {
         return repository.findByUserEmailOrderByTaskDateDesc(email);
     }
 
+    // find task by task id
+    public Task findById(Long id) {
+        return repository.findById(id).get();
+    }
+
     // add new task
     public Task add(Task task) {
         return repository.save(task);
