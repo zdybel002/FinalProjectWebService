@@ -28,6 +28,11 @@ public class TaskService {
         return repository.findById(id).get();
     }
 
+    // find by category id
+    public List<Task> findByCategoryId(Long categoryId){
+        return repository.findByCategory_IdOrderByTaskDateAsc(categoryId);
+    }
+
     // add new task
     public Task add(Task task) {
         return repository.save(task);

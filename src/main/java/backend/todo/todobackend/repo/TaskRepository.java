@@ -15,6 +15,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     // find all tasks of a specific user
     List<Task> findByUserEmailOrderByTaskDateDesc(String email);
 
+    //find
+    List<Task> findByCategory_IdOrderByTaskDateAsc(Long categoryId);
 
 
 }

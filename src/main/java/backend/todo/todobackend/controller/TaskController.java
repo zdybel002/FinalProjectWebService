@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 
@@ -94,6 +95,12 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    // find all tasks by category id
+    @PostMapping("/category")
+    public ResponseEntity<List<Task>> findAll(@RequestBody Long categoryId) {
+        return ResponseEntity.ok(taskService.findByCategoryId(categoryId));
+    }
 
 
 }
+
