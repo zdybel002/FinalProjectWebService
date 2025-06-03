@@ -3,6 +3,7 @@ package backend.todo.todobackend.controller;
 
 import backend.todo.todobackend.entity.Task;
 import backend.todo.todobackend.service.TaskService;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -99,6 +100,21 @@ public class TaskController {
     @PostMapping("/category")
     public ResponseEntity<List<Task>> findAll(@RequestBody Long categoryId) {
         return ResponseEntity.ok(taskService.findByCategoryId(categoryId));
+    }
+
+    // delete task
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+
+        // try-catch is optional, without it stacktrace will be returned on error
+        // here is an example of handling exceptions and sending custom message/status
+        try {
+            taskService.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
     }
 
 
