@@ -53,5 +53,27 @@ public class TaskController {
 
     }
 
+    // update existing task
+    @PutMapping("/update")
+    public ResponseEntity<Task> update(@RequestBody Task task) {
+
+        // check required fields
+        if (task.getId() == null || task.getId() == 0) {
+            return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // if title is empty or null
+        if (task.getTitle() == null || task.getTitle().trim().length() == 0) {
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+
+        // save works for both adding and updating
+        taskService.update(task);
+
+        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
+
+    }
+
 
 }

@@ -27,4 +27,11 @@ public class TaskService {
     public Task add(Task task) {
         return repository.save(task);
     }
+
+    // update exsosting task
+    public Task update(Task task) {
+        return repository.save(task);
+    }
+
+
 }
