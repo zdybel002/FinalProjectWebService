@@ -18,7 +18,13 @@ public class TaskService {
         this.repository = repository;
     }
 
+    // find all task by user email
     public List<Task> findAll(String email) {
         return repository.findByUserEmailOrderByTaskDateDesc(email);
+    }
+
+    // add new task
+    public Task add(Task task) {
+        return repository.save(task);
     }
 }

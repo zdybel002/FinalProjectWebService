@@ -3,6 +3,7 @@ package backend.todo.todobackend.controller;
 
 import backend.todo.todobackend.entity.Task;
 import backend.todo.todobackend.service.TaskService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,25 @@ public class TaskController {
     @PostMapping("/all")
     public ResponseEntity<List<Task>> findAll(@RequestBody String email) {
         return ResponseEntity.ok(taskService.findAll(email));
+    }
+
+    // add new task
+    @PostMapping("/add")
+    public ResponseEntity<Task> add(@RequestBody Task task) {
+
+        // check required fields
+        if (task.getId() != null && task.getId() != 0) {
+            // id is auto-generated in DB (autoincrement), so it shouldn't be passed to avoid uniqueness conflicts
+            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // if title is empty or null
+        if (task.getTitle() == null || task.getTitle().trim().length() == 0) {
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(taskService.add(task)); // return created object with generated id
+
     }
 
 
