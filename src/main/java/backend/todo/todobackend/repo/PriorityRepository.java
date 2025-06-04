@@ -11,7 +11,8 @@ import java.util.List;
 @Repository
 public interface PriorityRepository extends JpaRepository<Priority, Long> {
 
-
+    // find all values for the given user
+    List<Priority> findByUserEmailOrderByIdAsc(String email);
 
 }
 
