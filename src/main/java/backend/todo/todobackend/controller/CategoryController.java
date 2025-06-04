@@ -3,6 +3,7 @@ package backend.todo.todobackend.controller;
 
 import backend.todo.todobackend.DTO.EmailRequest;
 import backend.todo.todobackend.entity.Category;
+import backend.todo.todobackend.entity.Priority;
 import backend.todo.todobackend.search.CategorySearchValues;
 import backend.todo.todobackend.service.CategoryService;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -99,7 +100,7 @@ public class CategoryController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    // find category by ID
+    // get priority by id
     @PostMapping("/id")
     public ResponseEntity<Category> findById(@RequestBody Long id) {
 
@@ -116,6 +117,8 @@ public class CategoryController {
         // return found category
         return ResponseEntity.ok(category);
     }
+
+
 
 
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @RestController
@@ -76,6 +77,25 @@ public class PriorityController {
         priorityService.update(priority);
 
         return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation successful)
+    }
+
+    // get priority by id
+    // id parameter is passed not in the request body, but in the URL
+    @PostMapping("/id")
+    public ResponseEntity<Priority> findById(@RequestBody Long id) {
+
+        Priority priority = null;
+
+        // you can avoid try-catch and get full stacktrace on error
+        // here is an example of handling the exception and sending a custom message/status
+        try {
+            priority = priorityService.findById(id);
+        } catch (NoSuchElementException e) { // if the object is not found
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(priority);
     }
 
 

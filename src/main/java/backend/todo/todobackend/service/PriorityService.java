@@ -35,6 +35,11 @@ public class PriorityService {
         return repository.save(priority);
     }
 
+    // find priority by id
+    public Priority findById(Long id) {
+        return repository.findById(id).get();
+    }
+
 
 
 }
