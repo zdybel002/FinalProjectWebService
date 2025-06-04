@@ -45,6 +45,11 @@ public class PriorityService {
         repository.deleteById(id);
     }
 
+    //find priorities by title for a specific user
+    public List<Priority> find(String title, String email) {
+        return repository.findByTitle(title, email);
+    }
+
 
 }
 

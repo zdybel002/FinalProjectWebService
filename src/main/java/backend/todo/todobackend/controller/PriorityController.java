@@ -2,6 +2,7 @@ package backend.todo.todobackend.controller;
 
 
 import backend.todo.todobackend.entity.Priority;
+import backend.todo.todobackend.search.PrioritySearchValues;
 import backend.todo.todobackend.service.PriorityService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -113,6 +114,19 @@ public class PriorityController {
         }
 
         return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation successful)
+    }
+
+    // search by any parameters in PrioritySearchValues
+    @PostMapping("/search")
+    public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues) {
+
+        // check required parameters
+        if (prioritySearchValues.getEmail() == null || prioritySearchValues.getEmail().trim().length() == 0) {
+            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // if title is empty or null — all categories will be returned
+        return ResponseEntity.ok(priorityService.find(prioritySearchValues.getTitle(), prioritySearchValues.getEmail()));
     }
 
 }
