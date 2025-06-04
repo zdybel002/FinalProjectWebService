@@ -40,6 +40,10 @@ public class PriorityService {
         return repository.findById(id).get();
     }
 
+    //delete priority by id
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
 
 
 }

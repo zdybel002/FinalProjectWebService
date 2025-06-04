@@ -3,6 +3,7 @@ package backend.todo.todobackend.controller;
 
 import backend.todo.todobackend.entity.Priority;
 import backend.todo.todobackend.service.PriorityService;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -98,5 +99,20 @@ public class PriorityController {
         return ResponseEntity.ok(priority);
     }
 
+    // Delete some priority
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+
+        // you can avoid try-catch and get full stacktrace on error
+        // here is an example of handling the exception and sending a custom message/status
+        try {
+            priorityService.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation successful)
+    }
 
 }
