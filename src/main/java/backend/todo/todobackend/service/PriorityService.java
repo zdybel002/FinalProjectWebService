@@ -24,6 +24,12 @@ public class PriorityService {
         return repository.findByUserEmailOrderByIdAsc(email);
     }
 
+    // Add endpoint to create a new priority
+    public Priority add(Priority priority)
+    {
+        return repository.save(priority);
+    }
+
 
 
 }
