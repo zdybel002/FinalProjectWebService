@@ -53,4 +53,30 @@ public class PriorityController {
     }
 
 
+    //Add endpoint to update priority with validation
+    @PutMapping("/update")
+    public ResponseEntity update(@RequestBody Priority priority) {
+
+        // check required parameters
+        if (priority.getId() == null || priority.getId() == 0) {
+            return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // if title is empty
+        if (priority.getTitle() == null || priority.getTitle().trim().length() == 0) {
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // if color is empty
+        if (priority.getColor() == null || priority.getColor().trim().length() == 0) {
+            return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // save works for both create and update
+        priorityService.update(priority);
+
+        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation successful)
+    }
+
+
 }

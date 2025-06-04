@@ -30,6 +30,11 @@ public class PriorityService {
         return repository.save(priority);
     }
 
+    //Add endpoint to update priority with validation
+    public Priority update(Priority priority) {
+        return repository.save(priority);
+    }
+
 
 
 }
