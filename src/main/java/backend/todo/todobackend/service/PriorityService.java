@@ -49,7 +49,5 @@ public class PriorityService {
     public List<Priority> find(String title, String email) {
         return repository.findByTitle(title, email);
     }
-
-
 }
 

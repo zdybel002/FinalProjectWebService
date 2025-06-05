@@ -9,5 +9,5 @@ import backend.todo.todobackend.entity.Stat;
 @Repository
 public interface StatRepository extends CrudRepository<Stat, Long> {
 
-
+    Stat findByUserEmail(String email);
 }
