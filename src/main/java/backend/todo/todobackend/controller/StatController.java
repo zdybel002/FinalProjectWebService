@@ -1,6 +1,5 @@
 package backend.todo.todobackend.controller;
 
-
 import backend.todo.todobackend.entity.Stat;
 import backend.todo.todobackend.service.StatService;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
-@RestController
-public class StatController {
 
+@RestController
+// base URI is not needed since there is only one method
+public class StatController {
 
     private final StatService statService; // service to access data (we don't call repositories directly)
 
@@ -31,5 +31,6 @@ public class StatController {
         // you can skip ResponseEntity and just return the collection, status code will still be 200 OK
         return ResponseEntity.ok(statService.findStat(email));
     }
+
 
 }

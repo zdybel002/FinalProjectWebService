@@ -1,9 +1,6 @@
 package backend.todo.todobackend.controller;
 
-
-import backend.todo.todobackend.DTO.EmailRequest;
 import backend.todo.todobackend.entity.Category;
-import backend.todo.todobackend.entity.Priority;
 import backend.todo.todobackend.search.CategorySearchValues;
 import backend.todo.todobackend.service.CategoryService;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,39 +8,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.NoSuchElementException;
-
 
 @RestController
 @RequestMapping("/category") // base URI for all methods in this controller
 public class CategoryController {
 
+    // this is the service layer to work with the database
     private CategoryService categoryService;
 
+    // constructor injection (we inject service using constructor)
+    // we do not use @Autowired on the field because it is not recommended
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
-
     @PostMapping("/all")
-    public List<Category> findAll(@RequestBody EmailRequest request) {
-        return categoryService.findAll(request.getEmail());
-    }
-
-    // search categories by title and email
-    @PostMapping("/search")
-    public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues) {
-
-        // check if email is missing
-        if (categorySearchValues.getEmail() == null || categorySearchValues.getEmail().trim().length() == 0) {
-            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        // find all categories for this user with a specific title
-        List<Category> list = categoryService.findByTitle(categorySearchValues.getTitle(), categorySearchValues.getEmail());
-
-        return ResponseEntity.ok(list);
+    public List<Category> findAll(@RequestBody String email) {
+        // return all categories for this email
+        return categoryService.findAll(email);
     }
 
     @PostMapping("/add")
@@ -62,7 +47,6 @@ public class CategoryController {
         // save category and return it with generated ID
         return ResponseEntity.ok(categoryService.add(category));
     }
-
 
     @PutMapping("/update")
     public ResponseEntity update(@RequestBody Category category) {
@@ -100,7 +84,22 @@ public class CategoryController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    // get priority by id
+    // search categories by title and email
+    @PostMapping("/search")
+    public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues) {
+
+        // check if email is missing
+        if (categorySearchValues.getEmail() == null || categorySearchValues.getEmail().trim().length() == 0) {
+            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // find all categories for this user with a specific title
+        List<Category> list = categoryService.findByTitle(categorySearchValues.getTitle(), categorySearchValues.getEmail());
+
+        return ResponseEntity.ok(list);
+    }
+
+    // find category by ID
     @PostMapping("/id")
     public ResponseEntity<Category> findById(@RequestBody Long id) {
 
@@ -117,8 +116,4 @@ public class CategoryController {
         // return found category
         return ResponseEntity.ok(category);
     }
-
-
-
-
 }

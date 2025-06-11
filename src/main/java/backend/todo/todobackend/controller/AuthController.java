@@ -1,8 +1,5 @@
 package backend.todo.todobackend.controller;
 
-
-
-
 import backend.todo.todobackend.entity.User;
 import backend.todo.todobackend.repo.UserRepository;
 import backend.todo.todobackend.search.LoginRequest;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import java.util.Optional;
 
@@ -30,7 +28,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
-
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();

@@ -1,10 +1,10 @@
 package backend.todo.todobackend.repo;
 
+import backend.todo.todobackend.entity.Priority;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import backend.todo.todobackend.entity.Priority;
 
 
 import java.util.List;
@@ -23,5 +23,6 @@ public interface PriorityRepository extends JpaRepository<Priority, Long> {
             " and p.user.email=:email " + // filtering for a specific user
             "order by p.title asc") // sorting by title
     List<Priority> findByTitle(@Param("title") String title, @Param("email") String email);
+
 }
 

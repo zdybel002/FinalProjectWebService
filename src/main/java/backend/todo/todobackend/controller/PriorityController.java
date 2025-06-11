@@ -1,36 +1,39 @@
 package backend.todo.todobackend.controller;
 
-
-import backend.todo.todobackend.entity.Priority;
 import backend.todo.todobackend.search.PrioritySearchValues;
 import backend.todo.todobackend.service.PriorityService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import backend.todo.todobackend.entity.Priority;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
+
+
 
 
 @RestController
 @RequestMapping("/priority") // base URI
 public class PriorityController {
 
-
+    // access to DB data
     private PriorityService priorityService;
 
+    // constructor-based dependency injection
+    // we do not use @Autowired on the field because "Field injection is not recommended"
     public PriorityController(PriorityService priorityService) {
         this.priorityService = priorityService;
     }
 
 
-    //fetch all priorities by email
     @PostMapping("/all")
     public List<Priority> findAll(@RequestBody String email) {
-
         return priorityService.findAll(email);
     }
+
 
     @PostMapping("/add")
     public ResponseEntity<Priority> add(@RequestBody Priority priority) {
@@ -56,7 +59,6 @@ public class PriorityController {
     }
 
 
-    //Add endpoint to update priority with validation
     @PutMapping("/update")
     public ResponseEntity update(@RequestBody Priority priority) {
 
@@ -81,7 +83,6 @@ public class PriorityController {
         return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation successful)
     }
 
-    // get priority by id
     // id parameter is passed not in the request body, but in the URL
     @PostMapping("/id")
     public ResponseEntity<Priority> findById(@RequestBody Long id) {
@@ -100,7 +101,8 @@ public class PriorityController {
         return ResponseEntity.ok(priority);
     }
 
-    // Delete some priority
+
+    // for deletion we use DELETE mapping with id in the URL path variable
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
 
@@ -115,6 +117,7 @@ public class PriorityController {
 
         return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation successful)
     }
+
 
     // search by any parameters in PrioritySearchValues
     @PostMapping("/search")

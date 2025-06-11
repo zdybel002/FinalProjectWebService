@@ -12,7 +12,7 @@ import lombok.Setter;
 // возможные значения, по которым можно искать приоритеты
 public class PrioritySearchValues {
 
-    private String title;
-    private String email;
+    private String title; // такое же название должно быть у объекта на frontend - необязательно заполнять
+    private String email; // для фильтрации значений конкретного пользователя - обязательно заполнять
 
 }

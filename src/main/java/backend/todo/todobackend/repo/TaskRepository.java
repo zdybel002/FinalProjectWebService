@@ -1,28 +1,20 @@
 package backend.todo.todobackend.repo;
 
-
+import backend.todo.todobackend.entity.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import backend.todo.todobackend.entity.Task;
+
 
 import java.util.Date;
 import java.util.List;
 
-
 // OOP principle: abstraction-implementation — here we describe all available ways to access data
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-
-    // find all tasks of a specific user
-    List<Task> findByUserEmailOrderByTaskDateDesc(String email);
-
-    //find
-    List<Task> findByCategory_IdOrderByTaskDateAsc(Long categoryId);
-
 
     @Query("SELECT t FROM Task t where " +
             "(:title is null or :title='' or lower(t.title) like lower(concat('%', :title,'%'))) and" +
@@ -46,6 +38,12 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
                             @Param("dateTo") Date dateTo,
                             Pageable pageable
     );
+
+    // find all tasks of a specific user
+    List<Task> findByUserEmailOrderByTaskDateDesc(String email);
+
+    //find all tasks 0f id some category
+    List<Task> findByCategory_IdOrderByTaskDateAsc(Long categoryId);
 
 }
 

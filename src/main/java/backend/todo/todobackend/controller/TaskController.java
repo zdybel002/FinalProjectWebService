@@ -1,7 +1,5 @@
 package backend.todo.todobackend.controller;
 
-
-import backend.todo.todobackend.entity.Task;
 import backend.todo.todobackend.search.TaskSearchValues;
 import backend.todo.todobackend.service.TaskService;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,9 +9,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import backend.todo.todobackend.entity.Task;
 
 import java.text.ParseException;
 import java.util.*;
+
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,23 +21,34 @@ import java.util.*;
 @RequestMapping("/task") // base URI
 public class TaskController {
 
-
-    public static final String ID_COLUMN = "id";
-    private final TaskService taskService;
-
+    public static final String ID_COLUMN = "id"; // name of the ID column
+    private final TaskService taskService; // service to access data (we don't call repositories directly)
 
 
+    // constructor-based dependency injection
     // we don't use @Autowired on the class field because "Field injection is not recommended"
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
 
-
-    // find all tasks for the specific user by email
+    // get all tasks
     @PostMapping("/all")
     public ResponseEntity<List<Task>> findAll(@RequestBody String email) {
-        return ResponseEntity.ok(taskService.findAll(email));
+        return ResponseEntity.ok(taskService.findAll(email)); // find all tasks for the specific user
+    }
+
+//    @PostMapping("/category")
+//    public ResponseEntity<List<Task>> findByCategoryId(@RequestBody Long id) {
+//        return ResponseEntity.ok(taskService.findByCategoryId(id));
+//
+//    }
+
+    @PostMapping("/category")
+    public ResponseEntity<List<Task>> getTasksByCategory(@RequestBody Map<String, Long> body) {
+        Long categoryId = body.get("categoryId");
+        List<Task> tasks = taskService.findByCategoryId(categoryId);
+        return ResponseEntity.ok(tasks);
     }
 
     // add new task
@@ -58,6 +69,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.add(task)); // return created object with generated id
 
     }
+
 
     // update existing task
     @PutMapping("/update")
@@ -81,6 +93,24 @@ public class TaskController {
 
     }
 
+
+    // for deletion, we use DELETE with id in URL, not PUT,
+    // because DELETE is more suitable and RESTful for removing resources
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+
+        // try-catch is optional, without it stacktrace will be returned on error
+        // here is an example of handling exceptions and sending custom message/status
+        try {
+            taskService.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
+    }
+
+
     // get task by id
     @PostMapping("/id")
     public ResponseEntity<Task> findById(@RequestBody Long id) {
@@ -99,26 +129,6 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-    // find all tasks by category id
-    @PostMapping("/category")
-    public ResponseEntity<List<Task>> findAll(@RequestBody Long categoryId) {
-        return ResponseEntity.ok(taskService.findByCategoryId(categoryId));
-    }
-
-    // delete task
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
-
-        // try-catch is optional, without it stacktrace will be returned on error
-        // here is an example of handling exceptions and sending custom message/status
-        try {
-            taskService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
-            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
-        }
-        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
-    }
 
     // search by any parameters in TaskSearchValues
     @PostMapping("/search")
@@ -206,5 +216,7 @@ public class TaskController {
     }
 
 
-}
 
+
+
+}
