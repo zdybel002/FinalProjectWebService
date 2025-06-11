@@ -3,8 +3,11 @@ package backend.todo.todobackend.service;
 import backend.todo.todobackend.entity.Task;
 import backend.todo.todobackend.repo.TaskRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -48,5 +51,8 @@ public class TaskService {
         repository.deleteById(id);
     }
 
+    public Page<Task> findByParams(String text, Boolean completed, Long priorityId, Long categoryId, String email, Date dateFrom, Date dateTo, PageRequest paging) {
+        return repository.findByParams(text, completed, priorityId, categoryId, email, dateFrom, dateTo, paging);
+    }
 
 }

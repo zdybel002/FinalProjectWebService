@@ -2,15 +2,18 @@ package backend.todo.todobackend.controller;
 
 
 import backend.todo.todobackend.entity.Task;
+import backend.todo.todobackend.search.TaskSearchValues;
 import backend.todo.todobackend.service.TaskService;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.text.ParseException;
+import java.util.*;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -115,6 +118,91 @@ public class TaskController {
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
+    }
+
+    // search by any parameters in TaskSearchValues
+    @PostMapping("/search")
+    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValues taskSearchValues) throws ParseException {
+
+        // avoid NullPointerException
+        String title = taskSearchValues.getTitle() != null ? taskSearchValues.getTitle() : null;
+
+        // convert Boolean to Integer
+        Boolean completed = taskSearchValues.getCompleted() != null && taskSearchValues.getCompleted() == 1 ? true : false;
+
+        Long priorityId = taskSearchValues.getPriorityId() != null ? taskSearchValues.getPriorityId() : null;
+        Long categoryId = taskSearchValues.getCategoryId() != null ? taskSearchValues.getCategoryId() : null;
+
+        String sortColumn = taskSearchValues.getSortColumn() != null ? taskSearchValues.getSortColumn() : null;
+        String sortDirection = taskSearchValues.getSortDirection() != null ? taskSearchValues.getSortDirection() : null;
+
+        Integer pageNumber = taskSearchValues.getPageNumber() != null ? taskSearchValues.getPageNumber() : null;
+        Integer pageSize = taskSearchValues.getPageSize() != null ? taskSearchValues.getPageSize() : null;
+
+        String email = taskSearchValues.getEmail() != null ? taskSearchValues.getEmail() : null; // to show tasks for this user only
+
+        // check required params
+        if (email == null || email.trim().length() == 0) {
+            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+
+        // to capture all tasks within date range regardless of time - set times from 00:00 to 23:59
+
+        Date dateFrom = null;
+        Date dateTo = null;
+
+
+        // set time to 00:01 for start date (if specified)
+        if (taskSearchValues.getDateFrom() != null) {
+            Calendar calendarFrom = Calendar.getInstance();
+            calendarFrom.setTime(taskSearchValues.getDateFrom());
+            calendarFrom.set(Calendar.HOUR_OF_DAY, 0);
+            calendarFrom.set(Calendar.MINUTE, 1);
+            calendarFrom.set(Calendar.SECOND, 1);
+            calendarFrom.set(Calendar.MILLISECOND, 1);
+
+            dateFrom = calendarFrom.getTime(); // set start date time to 00:01
+
+        }
+
+
+        // set time to 23:59 for end date (if specified)
+        if (taskSearchValues.getDateTo() != null) {
+
+            Calendar calendarTo = Calendar.getInstance();
+            calendarTo.setTime(taskSearchValues.getDateTo());
+            calendarTo.set(Calendar.HOUR_OF_DAY, 23);
+            calendarTo.set(Calendar.MINUTE, 59);
+            calendarTo.set(Calendar.SECOND, 59);
+            calendarTo.set(Calendar.MILLISECOND, 999);
+
+            dateTo = calendarTo.getTime(); // set end date time to 23:59
+
+        }
+
+
+        // sort direction
+        Sort.Direction direction = sortDirection == null || sortDirection.trim().length() == 0 || sortDirection.trim().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        /* We add ID as the second sort field to ensure a consistent order.
+           For example, if two tasks have the same priority and we sort by that field,
+           the order of those two records could vary on each query since no secondary sort is specified.
+           Using ID as the secondary sort field guarantees consistent ordering of tasks with identical priority.
+         */
+
+        // create sort object with column and direction
+        Sort sort = Sort.by(direction, sortColumn, ID_COLUMN);
+
+        // pagination object
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
+        // query result with pagination
+        Page<Task> result = taskService.findByParams(title, completed, priorityId, categoryId, email, dateFrom, dateTo, pageRequest);
+
+        // return query result
+        return ResponseEntity.ok(result);
+
     }
 
 
