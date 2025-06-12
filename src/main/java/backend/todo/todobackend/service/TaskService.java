@@ -38,8 +38,4 @@ public class TaskService {
                 .orElseThrow(() -> new NoSuchElementException("Task not found: " + id));
     }
 
-    // And if you still need by-category:
-    public List<Task> findByCategoryId(Long catId) {
-        return repo.findByCategory_Id(catId);
-    }
 }

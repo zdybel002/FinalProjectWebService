@@ -3,13 +3,10 @@ package backend.todo.todobackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.type.NumericBooleanConverter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -21,10 +18,6 @@ User tasks
 
 @Entity
 @Table(name = "task", schema = "todolist", catalog = "postgres")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Task {
@@ -34,14 +27,13 @@ public class Task {
 
     private String title;
 
+
+
     private Boolean completed;
 
     @Column(name = "task_date")
-    private Date taskDate;
+    private LocalDateTime taskDate;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private Category category;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,6 +49,46 @@ public class Task {
         return id.equals(task.id);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    public LocalDateTime getTaskDate() {
+        return taskDate;
+    }
+
+    public void setTaskDate(LocalDateTime taskDate) {
+        this.taskDate = taskDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
@@ -66,4 +98,5 @@ public class Task {
     public String toString() {
         return title;
     }
+
 }
