@@ -52,13 +52,14 @@ public class WeatherService {
 
         // parse temperature
         Map<String,Object> main = (Map<String,Object>) resp.get("main");
-        double temp = ((Number)main.get("temp")).doubleValue();
+        double temp = ((Number)((Map)resp.get("main")).get("temp")).doubleValue();
 
-        // parse description
-        @SuppressWarnings("unchecked")
-        Map<String,Object> weather0 = ((List<Map<String,Object>>)resp.get("weather")).get(0);
+        // weather is a List of Maps; grab the first element
+        List<Map<String,Object>> weatherList = (List<Map<String,Object>>) resp.get("weather");
+        Map<String,Object> weather0 = weatherList.get(0);
+
         String desc = (String) weather0.get("description");
-        String icon = (String) weather0.get("icon");
+        String icon = (String) weather0.get("icon");    // ← this line
 
         // parse date (from UNIX timestamp)
         long dt   = ((Number)resp.get("dt")).longValue();

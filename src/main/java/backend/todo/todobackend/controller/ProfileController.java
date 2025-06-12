@@ -21,7 +21,6 @@ public class ProfileController {
     public ProfileDto get(@RequestBody Long userId) {
         var u = repo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        // now include u.getTelegramChat()
         return new ProfileDto(u.getId(), u.getLocation(), u.getTelegramChat());
     }
 
