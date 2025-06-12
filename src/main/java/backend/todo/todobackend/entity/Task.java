@@ -28,13 +28,12 @@ User tasks
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Task {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
 
-    @Convert(converter = NumericBooleanConverter.class)
     private Boolean completed;
 
     @Column(name = "task_date")
