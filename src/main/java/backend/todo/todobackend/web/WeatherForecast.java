@@ -6,7 +6,7 @@ public class WeatherForecast {
     private LocalDate date;
     private double    tempC;
     private String    description;
-    private String    icon;        // e.g. "04d"
+    private String    icon;  // ← this field
 
     public WeatherForecast() { }
 
@@ -20,31 +20,13 @@ public class WeatherForecast {
         this.icon        = icon;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+    public LocalDate getDate() { return date; }
+    public double    getTempC() { return tempC; }
+    public String    getDescription() { return description; }
+    public String    getIcon() { return icon; }      // ← getter
 
-    public double getTempC() {
-        return tempC;
-    }
-    public void setTempC(double tempC) {
-        this.tempC = tempC;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
+    public void setDate(LocalDate date) { this.date = date; }
+    public void setTempC(double tempC) { this.tempC = tempC; }
+    public void setDescription(String description) { this.description = description; }
+    public void setIcon(String icon) { this.icon = icon; }  // ← setter
 }
