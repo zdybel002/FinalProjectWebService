@@ -27,7 +27,7 @@ public class NotificationScheduler {
         this.tg       = tg;
     }
 
-    @Scheduled(fixedRate = 600_000)
+    @Scheduled(fixedRate = "${taskscheduler.check.rate:600000}")
     public void checkDeadlines() {
         LocalDateTime now    = LocalDateTime.now();
         LocalDateTime cutoff = now.plusHours(1);
