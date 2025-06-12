@@ -18,8 +18,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT t FROM Task t where " +
             "(:title is null or :title='' or lower(t.title) like lower(concat('%', :title,'%'))) and" +
-            "(:completed is null or t.completed=:completed) and " +  // consider that parameter can be null or empty
-            "(:priorityId is null or t.priority.id=:priorityId) and " +
+            "(:completed is null or t.completed=:completed) and " +
             "(:categoryId is null or t.category.id=:categoryId) and " +
             "(:categoryId is null or t.category.id=:categoryId) and " +
             "(" +
