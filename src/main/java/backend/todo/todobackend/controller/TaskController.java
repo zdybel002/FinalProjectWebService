@@ -10,12 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-@CrossOrigin(
-        originPatterns = "*",
-        methods        = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS },
-        allowedHeaders = "*",
-        allowCredentials = "true"
-)
 @RestController
 @RequestMapping("/task")
 public class TaskController {
