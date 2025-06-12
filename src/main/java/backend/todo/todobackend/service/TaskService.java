@@ -1,50 +1,45 @@
 package backend.todo.todobackend.service;
 
-import backend.todo.todobackend.repo.TaskRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import backend.todo.todobackend.entity.Task;
-
-import java.util.Date;
+import backend.todo.todobackend.repo.TaskRepository;
+import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
-@Transactional
 public class TaskService {
+    private final TaskRepository repo;
 
-    private final TaskRepository repository;
-
-    public TaskService(TaskRepository repository) {
-        this.repository = repository;
+    public TaskService(TaskRepository repo) {
+        this.repo = repo;
     }
 
-    public List<Task> findAll(String email) {
-        return repository.findByUserEmailOrderByTaskDateDesc(email);
+    // Called by TaskController.findAll()
+    public List<Task> findAllByUserId(Long userId) {
+        return repo.findAllByUser_Id(userId);
     }
 
-    public Task add(Task task) {
-        return repository.save(task);
+    // Called by TaskController.add() and update()
+    public Task add(Task t) {
+        return repo.save(t);
+    }
+    public Task update(Task t) {
+        return repo.save(t);
     }
 
-    public Task update(Task task) {
-        return repository.save(task);
-    }
-
+    // Called by TaskController.delete()
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        repo.deleteById(id);
     }
 
-    public Page<Task> findByParams(String text, Boolean completed, Long priorityId, Long categoryId, String email, Date dateFrom, Date dateTo, PageRequest paging) {
-        return repository.findByParams(text, completed, priorityId, categoryId, email, dateFrom, dateTo, paging);
-    }
-
+    // Called by TaskController.findById()
     public Task findById(Long id) {
-        return repository.findById(id).get();
+        return repo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Task not found: " + id));
     }
 
-    public List<Task> findByCategoryId(Long categoryId){
-        return repository.findByCategory_IdOrderByTaskDateAsc(categoryId);
+    // And if you still need by-category:
+    public List<Task> findByCategoryId(Long catId) {
+        return repo.findByCategory_Id(catId);
     }
 }
