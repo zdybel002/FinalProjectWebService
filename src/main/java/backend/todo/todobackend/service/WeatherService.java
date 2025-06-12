@@ -9,6 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -55,8 +56,9 @@ public class WeatherService {
 
         // parse description
         @SuppressWarnings("unchecked")
-        Map<String,Object> weather0 = ((java.util.List<Map<String,Object>>)resp.get("weather")).get(0);
+        Map<String,Object> weather0 = ((List<Map<String,Object>>)resp.get("weather")).get(0);
         String desc = (String) weather0.get("description");
+        String icon = (String) weather0.get("icon");
 
         // parse date (from UNIX timestamp)
         long dt   = ((Number)resp.get("dt")).longValue();
@@ -64,6 +66,6 @@ public class WeatherService {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
-        return new WeatherForecast(date, temp, desc);
+        return new WeatherForecast(date, temp, desc, icon);
     }
 }

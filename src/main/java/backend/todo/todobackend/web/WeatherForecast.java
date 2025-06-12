@@ -3,16 +3,21 @@ package backend.todo.todobackend.web;
 import java.time.LocalDate;
 
 public class WeatherForecast {
-    private LocalDate date;
-    private double    tempC;
-    private String    description;
+    private LocalDate    date;
+    private double       tempC;
+    private String       description;
+    private String       icon;        // ← new
 
     public WeatherForecast() { }
 
-    public WeatherForecast(LocalDate date, double tempC, String description) {
+    public WeatherForecast(LocalDate date,
+                           double tempC,
+                           String description,
+                           String icon) {
         this.date        = date;
         this.tempC       = tempC;
         this.description = description;
+        this.icon        = icon;
     }
 
     public LocalDate getDate() { return date; }
