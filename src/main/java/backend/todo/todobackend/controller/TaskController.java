@@ -1,37 +1,39 @@
 package backend.todo.todobackend.controller;
 
+import backend.todo.todobackend.entity.Task;
 import backend.todo.todobackend.service.TaskService;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import backend.todo.todobackend.entity.Task;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
-import java.text.ParseException;
-import java.util.*;
-
-
-
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(
+        originPatterns = "*",
+        methods        = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS },
+        allowedHeaders = "*",
+        allowCredentials = "true"
+)
 @RestController
-@RequestMapping("/task") // base URI
+@RequestMapping("/task")
 public class TaskController {
 
-    public static final String ID_COLUMN = "id";
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
+    /** Fetch all tasks for a given user email */
     @PostMapping("/all")
     public ResponseEntity<List<Task>> findAll(@RequestBody String email) {
-        return ResponseEntity.ok(taskService.findAll(email));
+        List<Task> tasks = taskService.findAll(email);
+        return ResponseEntity.ok(tasks);
     }
 
+    /** Fetch tasks by category ID */
     @PostMapping("/category")
     public ResponseEntity<List<Task>> getTasksByCategory(@RequestBody Map<String, Long> body) {
         Long categoryId = body.get("categoryId");
@@ -39,71 +41,65 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    /** Create a new task */
     @PostMapping("/add")
     public ResponseEntity<Task> add(@RequestBody Task task) {
-
-        if (task.getId() != null && task.getId() != 0) {
-            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+        if (task.getId() != null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(null);
         }
-
-         if (task.getTitle() == null || task.getTitle().trim().length() == 0) {
-            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(null);
         }
-
-        return ResponseEntity.ok(taskService.add(task));
-
+        Task created = taskService.add(task);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(created);
     }
 
+    /** Update an existing task */
     @PutMapping("/update")
     public ResponseEntity<Task> update(@RequestBody Task task) {
         if (task.getId() == null || task.getId() == 0) {
-            return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(null);
         }
-        if (task.getTitle() == null || task.getTitle().trim().length() == 0) {
-            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(null);
         }
-
-        taskService.update(task);
-
-        return new ResponseEntity(HttpStatus.OK);
-
+        Task updated = taskService.update(task);
+        return ResponseEntity.ok(updated);
     }
 
+    /** Delete by ID */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
-
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         try {
             taskService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
-            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.ok().build();
+        } catch (EmptyResultDataAccessException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .build();
         }
-        return new ResponseEntity(HttpStatus.OK); // just return status 200 (operation succeeded)
     }
 
-
-    // get task by id
+    /** Fetch a single task by ID */
     @PostMapping("/id")
     public ResponseEntity<Task> findById(@RequestBody Long id) {
-
-        Task task = null;
-
-        // try-catch is optional, without it stacktrace will be returned on error
-        // here is an example of handling exceptions and sending custom message/status
         try {
-            task = taskService.findById(id);
-        } catch (NoSuchElementException e) { // if object not found
-            e.printStackTrace();
-            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+            Task t = taskService.findById(id);
+            return ResponseEntity.ok(t);
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(null);
         }
-
-        return ResponseEntity.ok(task);
     }
-
-
-
-
-
-
-
 }
