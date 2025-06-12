@@ -1,13 +1,5 @@
 package backend.todo.todobackend.entity;
 
-
-
-/*
-
-пользователь - основной объект, с которым связаны все остальные (через внешние ключи)
-
- */
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,10 +29,6 @@ public class User {
 
     @Column(name = "userpassword")
     private String password;
-
-//    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-//    private Set<Role> roles;
-
 
     @Override
     public boolean equals(Object o) {

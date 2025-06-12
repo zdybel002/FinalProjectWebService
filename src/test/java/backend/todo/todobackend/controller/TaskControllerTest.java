@@ -10,11 +10,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import backend.todo.todobackend.entity.Category;
-import backend.todo.todobackend.entity.Priority;
 import backend.todo.todobackend.entity.Task;
-import backend.todo.todobackend.search.TaskSearchValues;
+import backend.todo.todobackend.requests.TaskSearchValues;
 import backend.todo.todobackend.service.TaskService;
 
 import java.text.ParseException;

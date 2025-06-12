@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import backend.todo.todobackend.entity.Category;
-import backend.todo.todobackend.search.CategorySearchValues;
+import backend.todo.todobackend.requests.CategorySearchValues;
 import backend.todo.todobackend.service.CategoryService;
 
 import java.util.*;

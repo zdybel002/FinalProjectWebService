@@ -1,4 +1,4 @@
-package backend.todo.todobackend.search;
+package backend.todo.todobackend.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

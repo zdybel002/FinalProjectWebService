@@ -28,9 +28,6 @@ User tasks
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Task {
-
-    // specify that the field is generated in the DB
-    // necessary when adding a new object and returning it with a new id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
@@ -39,25 +36,18 @@ public class Task {
 
     @Convert(converter = NumericBooleanConverter.class)
     private Boolean completed;
-    // for automatic conversion of number to true/false
 
-    @Column(name = "task_date") // in DB the field is named task_date because date is a reserved word
+    @Column(name = "task_date")
     private Date taskDate;
 
-    // task can have only one priority (from the other side - the same priority can be used in many tasks)
     @ManyToOne
-    @JoinColumn(name = "priority_id", referencedColumnName = "id") // fields to join by (foreign key)
-    private Priority priority;
-
-    // task can have only one category (from the other side - the same category can be used in many tasks)
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id") // fields to join by (foreign key)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id") // fields to join by (foreign key)
-    private User user; // for which user the task belongs
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
 
     @Override
