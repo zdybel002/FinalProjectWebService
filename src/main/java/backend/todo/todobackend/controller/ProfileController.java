@@ -1,10 +1,11 @@
 package backend.todo.todobackend.controller;
 
 import backend.todo.todobackend.entity.Profile;
+import backend.todo.todobackend.entity.User;
 import backend.todo.todobackend.repo.UserRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/profile")
@@ -16,22 +17,20 @@ public class ProfileController {
         this.repo = repo;
     }
 
+    // GET your saved profile
     @PostMapping("/get")
-    public ResponseEntity<Profile> get(@RequestBody Long userId) {
+    public Profile get(@RequestBody Long userId) {
         return repo.findById(userId)
                 .map(u -> new Profile(u.getId(), u.getLocation()))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    // SAVE updated location
     @PutMapping("/update")
-    public ResponseEntity<Void> update(@RequestBody Profile dto) {
-        return repo.findById(dto.getUserId())
-                .map(u -> {
-                    u.setLocation(dto.getLocation());
-                    repo.save(u);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public void update(@RequestBody Profile dto) {
+        User u = repo.findById(dto.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        u.setLocation(dto.getLocation());
+        repo.save(u);
     }
 }
