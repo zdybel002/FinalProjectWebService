@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     // for findAllByUserId
     List<Task> findAllByUser_Id(Long userId);
 
-    // for find tasks by category
-    List<Task> findByCategory_Id(Long categoryId);
+
+    List<Task> findAllByCompletedFalseAndTaskDateBetween(
+            LocalDateTime start, LocalDateTime end
+    );
 }

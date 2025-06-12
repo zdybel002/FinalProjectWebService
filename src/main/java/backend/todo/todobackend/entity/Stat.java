@@ -2,10 +2,6 @@ package backend.todo.todobackend.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.Objects;
@@ -18,10 +14,6 @@ General statistics for tasks (regardless of task categories)
 
 @Entity
 @Table(name = "stat", schema = "todolist", catalog = "postgres")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Stat {

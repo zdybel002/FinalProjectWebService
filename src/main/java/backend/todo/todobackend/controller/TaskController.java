@@ -4,7 +4,6 @@ import backend.todo.todobackend.entity.Category;
 import backend.todo.todobackend.entity.Task;
 import backend.todo.todobackend.entity.User;
 import backend.todo.todobackend.requests.TaskRequest;
-import backend.todo.todobackend.service.CategoryService;
 import backend.todo.todobackend.service.TaskService;
 import backend.todo.todobackend.service.UserService; // or UserRepository directly
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,14 +18,11 @@ import java.util.NoSuchElementException;
 public class TaskController {
 
     private final TaskService     taskService;
-    private final CategoryService categoryService;
     private final UserService     userService;    // you can also use UserRepository
 
     public TaskController(TaskService taskService,
-                          CategoryService categoryService,
                           UserService userService) {
         this.taskService     = taskService;
-        this.categoryService = categoryService;
         this.userService     = userService;
     }
 
@@ -58,56 +54,21 @@ public class TaskController {
         t.setTitle(req.title);
         t.setCompleted(req.completed != null && req.completed);
         t.setTaskDate(req.taskDate);
-        t.setUser(user);
-
-        // 4) Optionally set Category
-        if (req.categoryId != null) {
-            Category cat = categoryService.findById(req.categoryId);
-            t.setCategory(cat);
-        }
-
-        // 5) Save and return 201
-        Task created = taskService.add(t);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        t.setUser(userService.findById(req.userId));
+        Task saved = taskService.add(t);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     /** Update an existing task */
     @PutMapping("/update")
-    public ResponseEntity<Task> update(@RequestBody TaskRequest req) {
-        // 1) Validate
-        if (req.id == null || req.id == 0) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-        }
-        if (req.title == null || req.title.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-        }
-        if (req.userId == null) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-        }
-
-        // 2) Lookup existing
-        Task existing = taskService.findById(req.id);
-
-        // 3) Overwrite fields
-        existing.setTitle(req.title);
-        existing.setCompleted(req.completed != null && req.completed);
-        existing.setTaskDate(req.taskDate);
-
-        // 4) Re-attach User (if needed)
-        User user = userService.findById(req.userId);
-        existing.setUser(user);
-
-        // 5) Re-attach Category
-        if (req.categoryId != null) {
-            Category cat = categoryService.findById(req.categoryId);
-            existing.setCategory(cat);
-        } else {
-            existing.setCategory(null);
-        }
-
-        // 6) Save and return
-        Task updated = taskService.update(existing);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<Task> update(@RequestBody TaskRequest r) {
+        Task ex = taskService.findById(r.id);
+        ex.setTitle(r.title);
+        ex.setCompleted(r.completed);
+        ex.setTaskDate(r.taskDate);
+        ex.setUser(userService.findById(r.userId));
+        Task upd = taskService.update(ex);
+        return ResponseEntity.ok(upd);
     }
 
     /** Delete by ID */

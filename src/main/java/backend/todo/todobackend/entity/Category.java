@@ -3,10 +3,6 @@ package backend.todo.todobackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.Objects;
@@ -22,10 +18,6 @@ Contains statistics for each category
 
 @Entity
 @Table(name = "category", schema = "todolist", catalog = "postgres")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Category {
