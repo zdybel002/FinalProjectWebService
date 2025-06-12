@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class WeatherService {
 
-    private final RestTemplate rest;
+    private final RestTemplate rest = new RestTemplate();
     private final String apiKey;
     private final String apiUrl;
 
@@ -23,49 +23,44 @@ public class WeatherService {
             @Value("${weather.api.key}") String apiKey,
             @Value("${weather.api.url}") String apiUrl
     ) {
-        this.rest   = new RestTemplate();
         this.apiKey = apiKey;
         this.apiUrl = apiUrl;
     }
 
-    /**
-     * Fetches current weather for a city name or "lat,lon".
-     */
+    @SuppressWarnings("unchecked")
     public WeatherForecast getForecast(String loc) {
-        UriComponentsBuilder b = UriComponentsBuilder
+        UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(apiUrl)
                 .queryParam("units", "metric")
                 .queryParam("appid", apiKey);
 
         if (loc.contains(",")) {
-            // lat,lon form
             String[] parts = loc.split(",");
-            b.queryParam("lat", parts[0].trim())
-                    .queryParam("lon", parts[1].trim());
+            builder.queryParam("lat",  parts[0].trim())
+                    .queryParam("lon",  parts[1].trim());
         } else {
-            // plain city name
-            b.queryParam("q", loc.trim());
+            builder.queryParam("q", loc.trim());
         }
 
-        String uri = b.toUriString();
+        String uri = builder.build(true).toUriString();
+
         Map<String,Object> resp = rest.getForObject(uri, Map.class);
 
-        // parse temperature
-        Map<String,Object> main = (Map<String,Object>) resp.get("main");
-        double temp = ((Number)main.get("temp")).doubleValue();
+        Map<String,Object> main   = (Map<String,Object>) resp.get("main");
+        double             temp   = ((Number)main.get("temp")).doubleValue();
 
-        // parse description
-        @SuppressWarnings("unchecked")
-        Map<String,Object> weather0 = ((List<Map<String,Object>>)resp.get("weather")).get(0);
-        String desc = (String) weather0.get("description");
-        String icon = (String) weather0.get("icon");
+        List<Map<String,Object>> weatherList =
+                (List<Map<String,Object>>) resp.get("weather");
+        Map<String,Object> weather0 = weatherList.get(0);
 
-        // parse date (from UNIX timestamp)
-        long dt   = ((Number)resp.get("dt")).longValue();
+        String description = (String) weather0.get("description");
+        String icon        = (String) weather0.get("icon");
+
+        long dt = ((Number)resp.get("dt")).longValue();
         LocalDate date = Instant.ofEpochSecond(dt)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
-        return new WeatherForecast(date, temp, desc, icon);
+        return new WeatherForecast(date, temp, description, icon);
     }
 }
