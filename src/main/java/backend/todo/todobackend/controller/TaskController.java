@@ -53,22 +53,26 @@ public class TaskController {
         Task t = new Task();
         t.setTitle(req.title);
         t.setCompleted(req.completed != null && req.completed);
-        t.setTaskDate(req.taskDate);
+        if (req.taskDate != null) {
+            t.setTaskDate(req.taskDate.toLocalDateTime());
+        }
         t.setUser(userService.findById(req.userId));
         Task saved = taskService.add(t);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.ok(saved);
     }
 
     /** Update an existing task */
     @PutMapping("/update")
     public ResponseEntity<Task> update(@RequestBody TaskRequest r) {
-        Task ex = taskService.findById(r.id);
-        ex.setTitle(r.title);
-        ex.setCompleted(r.completed);
-        ex.setTaskDate(r.taskDate);
-        ex.setUser(userService.findById(r.userId));
-        Task upd = taskService.update(ex);
-        return ResponseEntity.ok(upd);
+        Task existing = taskService.findById(r.id);
+        existing.setTitle(r.title);
+        existing.setCompleted(r.completed != null && r.completed);
+        if (r.taskDate != null) {
+            existing.setTaskDate(r.taskDate.toLocalDateTime());
+        }
+        existing.setUser(userService.findById(r.userId));
+        taskService.update(existing);
+        return ResponseEntity.ok(existing);
     }
 
     /** Delete by ID */
