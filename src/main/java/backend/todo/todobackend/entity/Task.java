@@ -31,7 +31,7 @@ public class Task {
 
     private Boolean completed;
 
-    @Column(name = "task_date")
+    @Column(name = "task_date", columnDefinition = "timestamp without time zone")
     private LocalDateTime taskDate;
 
 
